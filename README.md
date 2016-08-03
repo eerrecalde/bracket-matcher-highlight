@@ -2,7 +2,9 @@
 [![OS X Build Status](https://travis-ci.org/atom/bracket-matcher-highlight.svg?branch=master)](https://travis-ci.org/atom/bracket-matcher-highlight)
 [![Windows Build status](https://ci.appveyor.com/api/projects/status/rrsl2h7e0od26k54/branch/master?svg=true)](https://ci.appveyor.com/project/Atom/bracket-matcher-highlight/branch/master) [![Dependency Status](https://david-dm.org/atom/bracket-matcher-highlight.svg)](https://david-dm.org/atom/bracket-matcher-highlight)
 
-** Petty much a clone of bracket-matcher but with a more 'brackets editor' like highlight style **
+#### Petty much a clone of bracket-matcher but with a more 'brackets editor' like highlight style
+
+
 Highlights and jumps between `[]`, `()`, and `{}`. Also highlights matching XML
 and HTML tags.
 
