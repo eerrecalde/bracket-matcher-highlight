@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "./lib/main",
   "description": "Highlight the matching bracket for the `(){}[]` character under the cursor. Move the cursor to the matching bracket with `ctrl-m`.",
-  "repository": "https://github.com/atom/bracket-matcher-highlight",
+  "repository": "https://github.com/eerrecalde/bracket-matcher-highlight",
   "license": "MIT",
   "engines": {
     "atom": "*"
