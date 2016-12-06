@@ -3,12 +3,12 @@
 #### Petty much a clone of bracket-matcher but with a more 'brackets editor' like highlight style
 
 ### Installation:
-#### Install it
+#### 1) Install it
 You can do it with the packages manager in Atom, or by command line:
 
 `apm install bracket-matcher-highlight`
 
-#### Restart the editor
+#### 2) Restart the editor
 To be able to see the highlight, you'll need to close all the occurrences of Atom and open it again.
 
 ### How it works:
