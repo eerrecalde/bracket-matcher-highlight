@@ -2,7 +2,7 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'Bracket Matcher'
+      'label': 'Bracket Matcher Highlight'
       'submenu': [
         { 'label': 'Go To Matching Bracket', 'command': 'bracket-matcher-highlight:go-to-matching-bracket' }
         { 'label': 'Select Inside Brackets', 'command': 'bracket-matcher-highlight:select-inside-brackets' }

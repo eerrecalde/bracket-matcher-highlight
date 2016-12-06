@@ -1,13 +1,8 @@
-{Point} = require 'atom'
-
 describe "bracket matching", ->
   [editorElement, editor, buffer] = []
 
   beforeEach ->
     atom.config.set 'bracket-matcher-highlight.autocompleteBrackets', true
-
-    waitsForPromise ->
-      atom.workspace.open('sample.js')
 
     waitsForPromise ->
       atom.packages.activatePackage('bracket-matcher-highlight')
@@ -17,6 +12,9 @@ describe "bracket matching", ->
 
     waitsForPromise ->
       atom.packages.activatePackage('language-xml')
+
+    waitsForPromise ->
+      atom.workspace.open('sample.js')
 
     runs ->
       editor = atom.workspace.getActiveTextEditor()
@@ -81,6 +79,72 @@ describe "bracket matching", ->
         editor.setCursorBufferPosition([0, 2])
         expectNoHighlights()
 
+    describe "when there are commented brackets", ->
+      it "highlights the correct start/end pairs", ->
+        editor.setText '(//)'
+        editor.setCursorBufferPosition([0, 0])
+        expectNoHighlights()
+
+        editor.setCursorBufferPosition([0, 2])
+        expectNoHighlights()
+
+        editor.setCursorBufferPosition([0, 3])
+        expectNoHighlights()
+
+        editor.setText '{/*}*/'
+        editor.setCursorBufferPosition([0, 0])
+        expectNoHighlights()
+
+        editor.setCursorBufferPosition([0, 2])
+        expectNoHighlights()
+
+        editor.setCursorBufferPosition([0, 3])
+        expectNoHighlights()
+
+        editor.setText '[/*]*/]'
+        editor.setCursorBufferPosition([0, 0])
+        expectHighlights([0, 0], [0, 6])
+
+        editor.setCursorBufferPosition([0, 6])
+        expectHighlights([0, 6], [0, 0])
+
+        editor.setCursorBufferPosition([0, 2])
+        expectNoHighlights()
+
+    describe "when there are quoted brackets", ->
+      it "highlights the correct start/end pairs", ->
+        editor.setText "(')')"
+        editor.setCursorBufferPosition([0, 0])
+        expectHighlights([0, 0], [0, 4])
+
+        editor.setCursorBufferPosition([0, 5])
+        expectHighlights([0, 4], [0, 0])
+
+        editor.setCursorBufferPosition([0, 2])
+        expectNoHighlights()
+
+        editor.setText '["]"]'
+        editor.setCursorBufferPosition([0, 0])
+        expectHighlights([0, 0], [0, 4])
+
+        editor.setCursorBufferPosition([0, 5])
+        expectHighlights([0, 4], [0, 0])
+
+        editor.setCursorBufferPosition([0, 2])
+        expectNoHighlights()
+
+    describe "when there are brackets in regular expressions", ->
+      it "highlights the correct start/end pairs", ->
+        editor.setText "(/[)]/)"
+        editor.setCursorBufferPosition([0, 0])
+        expectHighlights([0, 0], [0, 6])
+
+        editor.setCursorBufferPosition([0, 7])
+        expectHighlights([0, 6], [0, 0])
+
+        editor.setCursorBufferPosition([0, 3])
+        expectNoHighlights()
+
     describe "when the cursor is moved off a pair", ->
       it "removes the starting pair and ending pair highlights", ->
         editor.moveToEndOfLine()
@@ -104,16 +168,25 @@ describe "bracket matching", ->
           editor.setCursorBufferPosition([8, 42])
           expectHighlights([8, 42], [8, 54])
 
-    describe "when the cursor is destroyed", ->
-      it "updates the highlights to use the editor's last cursor", ->
-        editor.setCursorBufferPosition([0, 29])
-        editor.addCursorAtBufferPosition([9, 0])
-        expectHighlights([0, 28], [12, 0])
-
-        editor.getCursors()[0].destroy()
+    describe "when a cursor is added or destroyed", ->
+      it "updates the highlights to use the new cursor", ->
+        editor.setCursorBufferPosition([9, 0])
         expectNoHighlights()
 
-        editor.setCursorBufferPosition([0, 29])
+        editor.addCursorAtBufferPosition([0, 29])
+        expectHighlights([0, 28], [12, 0])
+
+        editor.addCursorAtBufferPosition([0, 4])
+        expectNoHighlights()
+
+        editor.getLastCursor().destroy()
+        expectHighlights([0, 28], [12, 0])
+
+    describe "when the cursor moves off (clears) a selection next to a starting or ending pair", ->
+      it "highlights the starting pair and ending pair", ->
+        editor.moveToEndOfLine()
+        editor.selectLeft()
+        editor.getLastCursor().clearSelection()
         expectHighlights([0, 28], [12, 0])
 
     describe "HTML/XML tag matching", ->
@@ -544,6 +617,22 @@ describe "bracket matching", ->
         editor.setCursorBufferPosition([0, 0])
         editor.insertText '{'
         expect(buffer.lineForRow(0)).toBe "{}"
+        expect(editor.getCursorBufferPosition()).toEqual([0, 1])
+
+    describe "when autocompleteCharacters configuration is set globally", ->
+      it "inserts a matching angle bracket", ->
+        atom.config.set 'bracket-matcher-highlight.autocompleteCharacters', ['<>']
+        editor.setCursorBufferPosition([0, 0])
+        editor.insertText '<'
+        expect(buffer.lineForRow(0)).toBe "<>"
+        expect(editor.getCursorBufferPosition()).toEqual([0, 1])
+
+    describe "when autocompleteCharacters configuration is set in scope", ->
+      it "inserts a matching angle bracket", ->
+        atom.config.set 'bracket-matcher-highlight.autocompleteCharacters', ['<>'], scopeSelector: '.source.js'
+        editor.setCursorBufferPosition([0, 0])
+        editor.insertText '<'
+        expect(buffer.lineForRow(0)).toBe "<>"
         expect(editor.getCursorBufferPosition()).toEqual([0, 1])
 
     describe "when there are multiple cursors", ->
