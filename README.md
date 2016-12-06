@@ -3,12 +3,16 @@
 #### Petty much a clone of bracket-matcher but with a more 'brackets editor' like highlight style
 
 ### Installation:
-- Install it with the packages manager in atom, or by command line:
+- **Install it**
+
+You can do it with the packages manager in Atom, or by command line:
+
 `apm install bracket-matcher-highlight`
 
-- To be able to see the highlight, you'll need to restart the editor (close all the occurrences of Atom and open it again).
+- #### Restart the editor
+To be able to see the highlight, you'll need to close all the occurrences of Atom and open it again.
 
-- That's it. 
+- That's it.
 
 Highlights and jumps between `[]`, `()`, and `{}`. Also highlights matching XML
 and HTML tags.
